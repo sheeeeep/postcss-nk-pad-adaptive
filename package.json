@@ -1,0 +1,30 @@
+{
+  "name": "postcss-nk-pad-adaptive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp watch:babel",
+    "css": "gulp css",
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "chai": "^4.1.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "gulp-eslint": "^5.0.0",
+    "gulp-mocha": "^6.0.0",
+    "gulp-postcss": "^8.0.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "postcss": "^7.0.2"
+  }
+}

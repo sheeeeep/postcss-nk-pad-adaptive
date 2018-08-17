@@ -1,0 +1,54 @@
+{
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "sourceType": "module",
+        "allowImportExportEverywhere": false,
+        "codeFrame": false,
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "no-extra-boolean-cast": [
+            "warn"
+        ],
+        "no-else-return": [
+            "error"
+        ],
+        "curly": [
+            "warn",
+            "all"
+        ],
+        "no-empty-function": [
+            "warn"
+        ],
+        "no-magic-numbers": [
+            "warn"
+        ],
+        "no-unmodified-loop-condition": [
+            "warn"
+        ],
+        "vars-on-top": [
+            "warn"
+        ],
+        "no-use-before-define": [
+            "error"
+        ],
+        "max-len": [
+            "warn",
+            150
+        ],
+        "no-spaced-func": [
+            "warn"
+        ],
+        "no-console": [
+            "error",
+            {
+                "allow": [
+                    "warn",
+                    "error"
+                ]
+            }
+        ]
+    },
+    "globals": {
+    }
+}
