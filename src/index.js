@@ -4,7 +4,15 @@ const defaultOpt = {
     global: false,
     includeDecls: [
         'margin',
+        'margin-top',
+        'margin-right',
+        'margin-bottom',
+        'margin-left',
         'padding',
+        'padding-top',
+        'padding-right',
+        'padding-bottom',
+        'padding-left',
         'top',
         'right',
         'bottom',
@@ -14,39 +22,59 @@ const defaultOpt = {
         'line-height'
     ],
     breakRules: [{
-        bound: 750,
+        bound: 768,
         multiple: 2
     }]
 };
 
-const AdaptiveFlagIndex = 0;
-
-const isNeedAdaptive = function isNeedAdaptive(firstNode) {
-    return firstNode.type === 'comment' && firstNode.text === 'pad-adaptive';
+const isNeedAdaptive = function isNeedAdaptive(css) {
+    let ret = false;
+    css.walkComments(comment => {
+        if(comment.text === 'pad-adaptive') {
+            ret = true;
+        }
+    })
+    return ret;
 }
 
 export default postcss.plugin('nk-pad-adaptive', (opts) => {
 	opts = Object.assign({}, defaultOpt, opts);
 
 	return css => {
-        if(!opts.global && !isNeedAdaptive(css.nodes[AdaptiveFlagIndex])) {
+        if(!opts.global && !isNeedAdaptive(css)) {
             return;
         }
 
         const filterCSS = css.clone();
 
         filterCSS.walkAtRules( atRule => {
-            if(atRule.name === 'media') {
-                atRule.remove()
-            }
+            atRule.remove()
         });
 
+        filterCSS.walkRules( rule => {
+            rule.nodes.forEach( (node, index) => {
+                // remove the decl with comment is /*nka-no*/
+                if(node.type === 'comment' && node.text ==='nka-no') {
+                    const removeNode = rule.nodes[index-1];
+                    if(removeNode && removeNode.type === 'decl'){
+                        removeNode.remove();
+                    }
+                }
+                // remain the decl with comment is /*nka-yes*/
+                if(node.type === 'comment' && node.text ==='nka-yes') {
+                    const removeNode = rule.nodes[index-1];
+                    if(removeNode && removeNode.type === 'decl'){
+                        removeNode.nkYes = true;
+                    }
+                }
+            });
+        })
+
         filterCSS.walkDecls( decl => {
-            if(!opts.includeDecls.includes(decl.prop)) {
+            if(!opts.includeDecls.includes(decl.prop) && !decl.nkYes) {
                 decl.remove();
                 return;
             }
-            //TODO: remove the decl with comment is /*no*/
         });
 
         filterCSS.walkComments( comment => {

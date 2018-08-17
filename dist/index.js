@@ -12,41 +12,61 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var defaultOpt = {
     global: false,
-    includeDecls: ['margin', 'padding', 'top', 'right', 'bottom', 'left', 'width', 'height', 'line-height'],
+    includeDecls: ['margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'top', 'right', 'bottom', 'left', 'width', 'height', 'line-height'],
     breakRules: [{
-        bound: 750,
+        bound: 768,
         multiple: 2
     }]
 };
 
-var AdaptiveFlagIndex = 0;
-
-var isNeedAdaptive = function isNeedAdaptive(firstNode) {
-    return firstNode.type === 'comment' && firstNode.text === 'pad-adaptive';
+var isNeedAdaptive = function isNeedAdaptive(css) {
+    var ret = false;
+    css.walkComments(function (comment) {
+        if (comment.text === 'pad-adaptive') {
+            ret = true;
+        }
+    });
+    return ret;
 };
 
 exports.default = _postcss2.default.plugin('nk-pad-adaptive', function (opts) {
     opts = Object.assign({}, defaultOpt, opts);
 
     return function (css) {
-        if (!opts.global && !isNeedAdaptive(css.nodes[AdaptiveFlagIndex])) {
+        if (!opts.global && !isNeedAdaptive(css)) {
             return;
         }
 
         var filterCSS = css.clone();
 
         filterCSS.walkAtRules(function (atRule) {
-            if (atRule.name === 'media') {
-                atRule.remove();
-            }
+            atRule.remove();
+        });
+
+        filterCSS.walkRules(function (rule) {
+            rule.nodes.forEach(function (node, index) {
+                // remove the decl with comment is /*nka-no*/
+                if (node.type === 'comment' && node.text === 'nka-no') {
+                    var removeNode = rule.nodes[index - 1];
+                    if (removeNode && removeNode.type === 'decl') {
+                        removeNode.remove();
+                    }
+                }
+                // remain the decl with comment is /*nka-yes*/
+                if (node.type === 'comment' && node.text === 'nka-yes') {
+                    var _removeNode = rule.nodes[index - 1];
+                    if (_removeNode && _removeNode.type === 'decl') {
+                        _removeNode.nkYes = true;
+                    }
+                }
+            });
         });
 
         filterCSS.walkDecls(function (decl) {
-            if (!opts.includeDecls.includes(decl.prop)) {
+            if (!opts.includeDecls.includes(decl.prop) && !decl.nkYes) {
                 decl.remove();
                 return;
             }
-            //TODO: remove the decl with comment is /*no*/
         });
 
         filterCSS.walkComments(function (comment) {
