@@ -9,4 +9,4 @@ before_script:
   - npm install -g istanbul
 script:
   - npm test
-  - npm run cover
+  - npm run coverage
