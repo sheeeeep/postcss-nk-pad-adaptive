@@ -3,7 +3,6 @@ const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
 const postcss = require('gulp-postcss');
 const babel = require('gulp-babel');
-const sourcemaps = require('gulp-sourcemaps');
 
 const nkPadAdaptive = require('./dist/index.js').default;
 
@@ -14,7 +13,6 @@ gulp.task('babel', function() {
 	return gulp
         .src(files)
 		.pipe(babel())
-		.pipe(sourcemaps.write('.',{sourceRoot: 'src'}))
 		.pipe(gulp.dest('./dist'));
 });
 

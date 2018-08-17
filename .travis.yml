@@ -7,4 +7,5 @@ language: node_js
 before_script:
   - npm install -g mocha
   - npm install -g istanbul
+  - npm start
 script: "npm test && npm run cover"
